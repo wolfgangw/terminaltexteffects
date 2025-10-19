@@ -88,7 +88,7 @@ characters are traveling along the same Path.
 * Fixed infinite loop when a new scene is created without an id and a scene has been deleted resuling in the length of the scenes dict corresponding to an existing scene id.
 * Fixed `Canvas` center calculations being off by one for odd widths/heights due to floor division.
 * Fixed `Gradient.get_color_at_fraction` rounding resulting in over-representing colors in the middle of the spectrum.
-* `Gradient.build_coordinate_color_mapping` signature changed to required full bounding box specification. This allows the effect to selectively build based on the text/canvas/terminal dimensions and reduces build time by by reducing the map size when possible.
+* `Gradient.build_coordinate_color_mapping` signature changed to require full bounding box specification. This allows the effect to selectively build based on the text/canvas/terminal dimensions and reduces build time by reducing the map size when possible.
 * Adds a call to `ansitools.dec_save_cursor_position` after each call to `ansitools.dec_restore_cursor_position` to address some terminals clearing the saved data after the restore.
 
 #### Other (0.12.0)
@@ -107,7 +107,7 @@ characters are traveling along the same Path.
 
 #### New Effects (0.11.0)
 
-* Matrix effect. Matrix digital rain effect with that ends with a final curtain and character resolve phase.
+* Matrix effect. Matrix digital rain effect ends with a final curtain and character resolve phase.
 
 #### New Engine Features (0.11.0)
 
@@ -129,8 +129,8 @@ characters are traveling along the same Path.
 
 #### Engine Changes (0.11.0)
 
-* Performance improvements to geometry functions related to circles. (10.0.1)
-* Gradient's support indexing and slicing.
+* Performance improvements to geometry functions related to circles. (0.10.1)
+* Gradients support indexing and slicing.
 * EffectCharacter objects no longer have a `symbol` attribute. Instead, the `Animation` class has a new attribute
 `current_character_visual` which provides access to a `symbol` and `color` attribute reflecting the character's current
 symbol and color. The prior `EffectCharacter.symbol` attribute was unreliable and represented both a formatted and
@@ -143,7 +143,7 @@ color code has been moved into the `_color_code` attribute.
 #### Effects Fixes (0.11.0)
 
 * Fixed swarm effect not handling the first swarm (bottom right characters) resulting in missing characters in the
-output. (10.0.1)
+output. (0.10.1)
 
 #### Other (0.11.0)
 
@@ -381,7 +381,7 @@ the symbol that will be printed after the effect completes. Set to `''` or `' '`
 
 * Gradients now support multiple step specification to control the distance between each stop pair. For example:
   graphics.Gradient(RED, BLUE, YELLOW, steps=(2,5)) results in a spectrum of RED -> (1 step) -> BLUE -> (4 steps) -> YELLOW
-* graphics.Gradient.get_color_at_fraction(fraction: float) will return a color at the given fraction of the spectrum when provided a float between 0 and 1, inclusive. This can be used to match the color to a ratio/ For example, the character height in the terminal.
+* graphics.Gradient.get_color_at_fraction(fraction: float) will return a color at the given fraction of the spectrum when provided a float between 0 and 1, inclusive. This can be used to match the color to a ratio. For example, the character height in the terminal.
 * graphics.Gradient.build_coordinate_color_mapping() will map gradient colors to coordinates in the terminal and supports a Gradient.Direction argument to enable gradients in the following directions: horizontal, vertical, diagonal, center
 * graphics.Gradient, if printed, will show a colored spectrum and the description of its stops and steps.
 * The Scene class has a new method: apply_gradient_to_symbols(). This method will iterate over a list of symbols and apply the colors from a gradient to the symbols. A frame with the symbol will be added for each color starting from the last color used in the previous symbol, up to the the index determined by the ratio of the current symbol's index in the symbols list to the total length of the list. This method allows scenes to automatically create frames from a list of symbols and gradient of arbitrary length while ensuring every symbol and color is displayed.
@@ -391,12 +391,12 @@ the symbol that will be printed after the effect completes. Set to `''` or `' '`
 * character.animation.set_appearance(symbol, color) will set the character symbol and color directly. If a Scene is active, the appearance will be overwritten with the Scene frame on the next call to step_animation(). This method is intended for the occasion where a full scene isn't needed, or the appearance needs to be set based on conditions not compatible with Scenes or the EventHandler. For example, setting the color based on the terminal row.
 * Terminal.CharacterSort enums moved to Terminal.CharacterGroup, Terminal.CharacterSort is now used for sorting and return a flat list of characters.
 * Terminal.CharacterSort has new sort methods, TOP_TO_BOTTOM_LEFT_TO_RIGHT, TOP_TO_BOTTOM_RIGHT_TO_LEFT, BOTTOM_TO_TOP_LEFT_TO_RIGHT, BOTTOM_TO_TOP_RIGHT_TO_LEFT, OUTSIDE_ROW_TO_MIDDLE, MIDDLE_ROW_TO_OUTSIDE
-* New Terminal.CharacterGroup options, CENTER_TO_OUTSIDE_DIAMONDS and OUTSIDE_TO_CENTER_DIAMONS
+* New Terminal.CharacterGroup options, CENTER_TO_OUTSIDE_DIAMONDS and OUTSIDE_TO_CENTER_DIAMONDS
 * graphics.Animation.adjust_color_brightness(color: graphics.Color, brightness: float) will convert the color to HSL, adjust the brightness to the given level, and return
   an RGB hex string.
 * CTRL-C keyboard interrupt during a running effect will exit gracefully.
 * geometry.find_coords_in_circle() has been rewritten to find all coords which fall in an ellipse. The result is a circle due to the height/width ratio of terminal cells. This function now finds all terminal coordinates within the 'circle' rather than an arbitrary subset.
-* All command line arguments are typed allowing for more easily defined and tested effect args.
+* All command line arguments are typed, allowing for more easily defined and tested effect args.
 
 ### Changes (0.7.0)
 
@@ -491,7 +491,7 @@ the symbol that will be printed after the effect completes. Set to `''` or `' '`
 #### Engine Changes (0.6.0)
 
 * Terminal._update_terminal_state() refactored for improved performance.
-* EffectCharacter.tick() will progress motion and animation by one step. This solves the problem of running Animation.step_animation() before Motion.move() and desyncing Path synced animations.
+* EffectCharacter.tick() will progress motion and animation by one step. This solves the problem of running Animation.step_animation() before Motion.move() and desyncing Path-synced animations.
 * EffectCharacter.is_active has been renamed to EffectCharacter.is_visible.
 * EffectCharacter.is_active() can be used to check if motion/animation is in progress.
 * graphics.Animation.new_scene(), motion.Motion.new_path(), and Path.new_waypoint() all support automatic IDs. If no ID is provided a unique ID is automatically generated.
@@ -572,7 +572,7 @@ the symbol that will be printed after the effect completes. Set to `''` or `' '`
 * Waves effect. A wave animation is played over the characters. Wave colors and final colors are configurable.
 * Blackhole effect. Characters spawn scattered as a field of stars. A blackhole forms and consumes the stars then explodes the characters across
    the screen. Characters then 'cool' and ease into position.
-* Swarm effect. Characters a separated into swarms and fly around the canvas before landing in position.
+* Swarm effect. Characters are separated into swarms and fly around the canvas before landing in position.
 * Animations support easing functions. Easing functions are applied to Scenes using Scene.ease = easing_function.
 * Canvas has a center attribute that is the center Coord of the canvas.
 * Terminal has a random_coord() method which returns a random coordinate. Can specify outside the canvas.
@@ -586,7 +586,7 @@ the symbol that will be printed after the effect completes. Set to `''` or `' '`
 * Animation methods for created Scenes and adding frames to scenes have been refactored to return Scene objects and expose terminal modes, respectively.
 * Easing function api has been simplified. Easing function callables are used directly rather than Enums and function maps.
 * Layer is set on the EffectCharacter object instead of the motion object. The layer is modified through the EventHandler to allow finer control over the layer.
-* Animations not longer sync to specific waypoints, rather, they sync to the progress of the character towards the active waypoint.
+* Animations no longer sync to specific waypoints, rather, they sync to the progress of the character towards the active waypoint.
 * Animations synced to waypoint progress can now sync to either the distance progression or the step progression.
 * Motion methods which utilize coordinates now use Coord objects rather than tuples.
 * Motion has methods for finding coordinates on a circle and in a circle.
@@ -627,7 +627,7 @@ the symbol that will be printed after the effect completes. Set to `''` or `' '`
 * Scenes can be synced to Waypoint progress. The scene will progress in-line with the character's steps towards
   the waypoint.
 
-* Waypoints now have a layer attribute. Characters are drawin in ascending layer order. While a character has
+* Waypoints now have a layer attribute. Characters are drawn in ascending layer order. While a character has
   a waypoint active, that waypoint's layer is used. Otherwise, the character is drawn in layer 0.
 
 ### Changes (0.3.1)
